@@ -11,10 +11,21 @@ public class GameWindow extends JFrame {
 
     public GameWindow() {
         this.setSize(1024, 600);
+        this.event();
 
         this.gameCanvas = new GameCanvas();
         this.add(this.gameCanvas);
 
+
+        this.setVisible(true);
+    }
+
+    private void event() {
+        this.keyboardEvent();
+        this.windowEvent();
+    }
+
+    private void keyboardEvent() {
         this.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -24,46 +35,43 @@ public class GameWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    gameCanvas.positionXPlayer -= 3;
+                    gameCanvas.player.x[0] -= gameCanvas.player.velocity;
 
                 }
-                if (e.getKeyCode() == KeyEvent.VK_RIGHT){
-                    gameCanvas.positionXPlayer += 3;
+                if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    gameCanvas.player.x[0] += gameCanvas.player.velocity;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_UP){
-                    gameCanvas.positionYPlayer -= 3;
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    gameCanvas.player.y[0] -= gameCanvas.player.velocity;
                 }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN){
-                    gameCanvas.positionYPlayer += 3;
+                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    gameCanvas.player.y[0] += gameCanvas.player.velocity;
                 }
             }
 
             @Override
-            public void keyReleased (KeyEvent e){
-                if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-                    System.out.println("Space Released");
+            public void keyReleased(KeyEvent e) {
 
-                }
             }
-
-
-
         });
+
+    }
+
+    private void windowEvent() {
         this.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 System.exit(1);
             }
         });
-
-        this.setVisible(true);
     }
 
     public void gameLoop() {
         while (true) {
             long currentTime = System.nanoTime();
             if (currentTime - this.lastTime >= 17_000_000) {
-                this.gameCanvas.positionXStar -= 3;
+                this.gameCanvas.runAll();
+
                 this.gameCanvas.renderAll();
 
                 this.lastTime = currentTime;

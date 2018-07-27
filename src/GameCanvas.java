@@ -4,89 +4,109 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class GameCanvas extends JPanel{
-    private BufferedImage starImage;
+public class GameCanvas extends JPanel {
+    private List<Star> stars;
     private BufferedImage playerImage;
     private BufferedImage backBuffered;
 
-
-    public int positionXStar = 1024;
-    public int positionYStar = 200;
-
-    public int positionXPlayer = 600;
-    public int positionYPlayer = 200;
-
-    private int vx = 2;
-    private int vy = 2;
+    public Player player = new Player();
 
     private Graphics graphics;
-    public static Random rd = new Random();
+    public Random rd = new Random();
 
-    public GameCanvas(){
+    private int timeIntervalStar = 0;
 
+    public GameCanvas() {
+        this.player.x[0] = 200;
+        this.player.y[0] = 100;
 
-        // snake case: user_name
-        // camel case: userName //
-        this.setSize(1024, 600);
+        this.setupBackBufferd();
 
-        this.backBuffered = new BufferedImage(1024, 600, BufferedImage.TYPE_INT_ARGB);
-        this.graphics = this.backBuffered.getGraphics();
-
-        //load anh
-        try {
-            this.starImage = ImageIO.read(new File("resources/images/star.png"));
-            this.playerImage = ImageIO.read(new File("resources/images/circle.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        //draw
+        this.setupCharacter();
 
         this.setVisible(true);
     }
-    @Override
-    protected void paintComponent (Graphics g) {
-        g.drawImage(this.backBuffered, 0, 0, null);
-        //ve
-        //g.setColor(Color.BLACK);
-        //g.fillRect(0,0,1024,600);
-        //g.drawImage(this.starImage, this.positionXStar,this.positionYStar, 10,10 , null);
+
+    private void setupBackBufferd() {
+        this.backBuffered = new BufferedImage(1024, 600, BufferedImage.TYPE_INT_ARGB);
+        this.graphics = this.backBuffered.getGraphics();
     }
 
-    public void renderAll(){
+    private void setupCharacter() {
+        this.setupStar();
+
+    }
+
+    public void renderBackground() {
         this.graphics.setColor(Color.BLACK);
-        this.graphics.fillRect(0,0,1024,600);
-        this.graphics.drawImage(this.starImage, this.positionXStar,this.positionYStar, 30,30 , null);
-        this.graphics.drawImage(this.playerImage, this.positionXPlayer,this.positionYPlayer, 20,20 , null);
-        this.repaint();
-
-        //di chuyen Player
-        if(this.positionYPlayer < 0) {
-            this.positionYPlayer = 580;
-            this.positionXPlayer = rd.nextInt(1000);
-        }
-        if(this.positionYPlayer > 580) {
-            this.positionYPlayer = 0;
-            this.positionXPlayer = rd.nextInt(1000);
-        }
-
-        if(this.positionXPlayer < 0) {
-            this.positionXPlayer = 1000;
-            this.positionYPlayer = rd.nextInt(580);
-        }
-        if(this.positionXPlayer > 1000) {
-            this.positionXPlayer = 0;
-            this.positionYPlayer = rd.nextInt(580);
-        }
-        //di chuyen Star
-        if(this.positionXStar < 0 || this.positionXStar > 1024) vx = -vx;
-        if(this.positionYStar < 0 || this.positionYStar > 540) vy = -vy;
-        this.positionXStar += vx;
-        this.positionYStar += vy;
-
-        this.repaint();
+        this.graphics.fillRect(0, 0, 1024, 600);
     }
 
+    private void setupStar() {
+        this.stars = new ArrayList<>();
+
+
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        g.drawImage(this.backBuffered, 0, 0, null);
+
+    }
+
+    public void renderAll() {
+        this.renderBackground();
+        this.stars.forEach(star -> star.render(graphics));
+        this.player.render(graphics);
+        this.repaint();
+
+    }
+
+    public void runAll() {
+        this.createStar();
+        this.createPlayer();
+        this.stars.forEach(star -> star.run());
+
+    }
+
+    private void createPlayer() {
+        this.player.x[1] = this.player.x[0] + 20;
+        this.player.y[1] = this.player.y[0]+10;
+
+        this.player.x[2] = this.player.x[0] + 20 ;
+        this.player.y[2] = this.player.y[0]-10;
+
+        this.player.velocity = 20;
+
+    }
+
+    private void createStar() {
+        if (this.timeIntervalStar == 30) {
+            Star star = new Star();
+            star.x = 900;
+            star.y = this.rd.nextInt(600);
+            star.image = this.loadImage("resources/images/star.png");
+            star.width = 10;
+            star.height = 10;
+            star.velocityX = this.rd.nextInt(3) + 1;
+            star.velocityY = this.rd.nextInt(3) + 1;
+            this.stars.add(star);
+            this.timeIntervalStar = 0;
+
+        } else {
+            this.timeIntervalStar += 1;
+        }
+    }
+
+    private BufferedImage loadImage(String path) {
+        try {
+            return ImageIO.read(new File(path));
+        } catch (IOException e) {
+            return null;
+        }
+    }
 }
