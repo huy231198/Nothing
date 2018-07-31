@@ -11,13 +11,17 @@ public class GameWindow extends JFrame {
 
     public GameWindow() {
         this.setSize(1024, 600);
+
+        this.setupGameCanvas();
+
         this.event();
 
+        this.setVisible(true);
+    }
+
+    private void setupGameCanvas() {
         this.gameCanvas = new GameCanvas();
         this.add(this.gameCanvas);
-
-
-        this.setVisible(true);
     }
 
     private void event() {
@@ -35,26 +39,34 @@ public class GameWindow extends JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    gameCanvas.player.x[0] -= gameCanvas.player.velocity;
+                    gameCanvas.player.angle += 5.0;
 
                 }
                 if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    gameCanvas.player.x[0] += gameCanvas.player.velocity;
+                    gameCanvas.player.angle -= 5.0;
+
                 }
                 if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    gameCanvas.player.y[0] -= gameCanvas.player.velocity;
+                    gameCanvas.player.velocity.multiply(3);
+
                 }
-                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    gameCanvas.player.y[0] += gameCanvas.player.velocity;
-                }
+//                if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+//                    gameCanvas.player.angle += 5.0;
+//
+//                }
+                gameCanvas.player.velocity.set(
+                        (new Vector2D(2.5f, 0).rotate(gameCanvas.player.angle))
+                );
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_UP) {
+                    gameCanvas.player.velocity.multiply(0.5f);
 
+                }
             }
         });
-
     }
 
     private void windowEvent() {
@@ -71,12 +83,9 @@ public class GameWindow extends JFrame {
             long currentTime = System.nanoTime();
             if (currentTime - this.lastTime >= 17_000_000) {
                 this.gameCanvas.runAll();
-
                 this.gameCanvas.renderAll();
-
                 this.lastTime = currentTime;
             }
         }
     }
 }
-
