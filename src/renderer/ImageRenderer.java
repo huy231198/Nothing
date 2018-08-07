@@ -1,3 +1,7 @@
+package renderer;
+
+import base.Vector2D;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -5,15 +9,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class ImageRenderer implements Renderer {
+
     private BufferedImage image;
     private int width;
     private int height;
 
-    public ImageRenderer(int width, int height, String path) {
+    public ImageRenderer(String path, int width, int height) {
         this.width = width;
         this.height = height;
-        this.image = loadImage(path);
-
+        this.image = this.loadImage(path);
     }
 
     private BufferedImage loadImage(String path) {
@@ -26,7 +30,13 @@ public class ImageRenderer implements Renderer {
 
     @Override
     public void render(Graphics graphics, Vector2D position) {
-        graphics.drawImage(this.image, (int)position.x - this.width/2 , (int)position.y - this.width/2 , this.width, this.height, null);
-
+        graphics.drawImage(
+                this.image,
+                (int) position.x - this.width / 2,
+                (int) position.y - this.height / 2,
+                this.width,
+                this.height,
+                null
+        );
     }
 }

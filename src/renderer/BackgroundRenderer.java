@@ -1,3 +1,7 @@
+package renderer;
+
+import base.Vector2D;
+
 import java.awt.*;
 
 public class BackgroundRenderer implements Renderer {
@@ -15,6 +19,6 @@ public class BackgroundRenderer implements Renderer {
     @Override
     public void render(Graphics graphics, Vector2D position) {
         graphics.setColor(this.color);
-        graphics.fillRect((int) position.x, (int) position.y,this.width,this.height);
+        graphics.fillRect((int) position.x, (int) position.y, this.width, this.height);
     }
 }
