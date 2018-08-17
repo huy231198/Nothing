@@ -1,6 +1,6 @@
 package game.enemyfollow;
 
-import base.GameObject;
+import  base.GameObject;
 import base.GameObjectManager;
 import base.Vector2D;
 import game.player.Player;
@@ -24,7 +24,10 @@ public class EnemyFollow extends GameObject implements PhysicBody {
     public void run() {
         super.run();
         this.position.addUp(this.velocity);
-
+        if (this.position.x < 0 || this.position.x>1024 || this.position.y<0 || this.position.y>600)
+        {
+            this.isAlive = false;
+        }
         this.boxCollider.position.set(this.position.x - 10, this.position.y - 10);
 
         Player player = GameObjectManager.instance.findPlayer();

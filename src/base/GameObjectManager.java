@@ -62,14 +62,16 @@ public class GameObjectManager {
                 .findFirst()
                 .orElse(null);
     }
-    public <T extends GameObject> T recycle(Class<T> cls){
-        T object =(T) this.list
+
+    public <T extends GameObject> T recycle(Class<T> cls) {
+        T object = (T) this.list
                 .stream()
                 .filter(gameObject -> !gameObject.isAlive)
                 .filter(gameObject -> cls.isInstance(gameObject))
                 .findFirst()
                 .orElse(null);
-        if (object != null){
+
+        if (object != null) {
             object.isAlive = true;
             return object;
         } else {
